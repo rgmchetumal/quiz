@@ -1,0 +1,8 @@
+# Ignorar el directorio node_modules
+node_modules
+
+# Ignorar algo que sólo es de MAC
+.DS_Store
+
+# Ingorar el npm-debug.log
+npm-debug.log
