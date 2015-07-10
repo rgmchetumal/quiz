@@ -14,3 +14,11 @@ exports.answer = function (req, res) {
 	};
 
 };
+
+// Get de la ruta author/credito
+exports.credito = function (req, res){
+
+	// Establecer el nombre del autor de Quiz
+	res.render('author/credito', {nombreAutor: 'Juan Quemada Vives'});
+
+};
