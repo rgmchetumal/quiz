@@ -9,9 +9,15 @@ router.get('/', function(req, res) {
   res.render('index', { title: 'Quiz' });
 });
 
-// Activar las páginas de preguntas y respuestas considerando sus controladores 
-router.get('/quizes/question', quizController.question);
-router.get('/quizes/answer', quizController.answer);
+// Definición de la ruta /quizes
+router.get('/quizes',                       quizController.index);
+router.get('/quizes/:quizId(\\d+)',         quizController.show);
+router.get('/quizes/:quizId(\\d+)/answer',  quizController.answer);
+
+
+// Activar las páginas de preguntas y respuestas considerando sus controladores (Instrucciones antiguas)
+//router.get('/quizes/question', quizController.question);
+// router.get('/quizes/answer', quizController.answer);
 
 router.get('/author/credito', quizController.credito);
 

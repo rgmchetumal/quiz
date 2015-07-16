@@ -1,5 +1,5 @@
-    <form method = "get" action = "/quizes/answer">
-         <br><p>Pregunta: <%= pregunta %> </p><br>
+    <form method = "get" action = "/quizes/<%= quiz.id %>/answer">
+         <br><p>Pregunta: <%= quiz.pregunta %> </p><br>
          <input type = "text" name = "respuesta" value ="Responda aquí" />
          <input type = "submit" value = "Enviar" />
     </form>

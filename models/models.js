@@ -34,22 +34,43 @@ var Quiz = sequelize.import(path.join(__dirname, 'quiz'));
 exports.Quiz = Quiz;
 
 // Crear e inicializar la tabla de preguntas
-sequelize.sync().success(function () {
+//sequelize.sync().success(function () {
 
      //success (..) ejecuta el manejador una vez creada la tabla
-     Quiz.count().success( function (count) {
+     //Quiz.count().success( function (count) {
 
-     	if (count === 0) {
+     	//if (count === 0) {
 
      		// La tabla se inicializa sólo cuando está vacía
-     		Quiz.create({ pregunta: 'Capital de Italia',
-     			          respuesta: 'Roma'
+     		//Quiz.create({ pregunta: 'Capital de Italia',
+     			          //respuesta: 'Roma'
 
-     		            }
-     		).success (function() { console.log ('La base de datos se ha inicializado')});
+     		            //}
+     		//).success (function() { console.log ('La base de datos se ha inicializado')});
 
-     	};
+     	//};
 
-     });
+     //});
 
+//});
+
+// Crear e incializar la tabla de preguntas
+// sequelize.sync() inicializa tabla de preguntas en BBDD
+sequelize.sync().then( function() {
+       // then (...) ejecuta el manejador una vez creada la tabla
+       Quiz.count().then (function(count) {
+          if (count === 0) {
+               // La tabla se inicializa sólo si está vacía
+               Quiz.create({ 
+                    pregunta: '¿Capital de Italia?', 
+                    respuesta: 'Roma'
+               });
+               
+               Quiz.create({ 
+                    pregunta: '¿Capital de Portugal?', 
+                    respuesta: 'Lisboa'
+               }).then( function() {console.log ('Base de datos inicializada')});
+
+          };
+       });
 });
