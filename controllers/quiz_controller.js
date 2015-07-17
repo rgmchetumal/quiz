@@ -23,11 +23,34 @@ exports.load = function ( req, res, next, quizId ) {
       ).catch( function (error) { next (error); });
 };
 
-// GET /quizes
+// GET /quizes?search=texto_a_buscar
 exports.index = function (req, res) {
-	models.Quiz.findAll().then(function (quizes) {
-		res.render('quizes/index.ejs', { quizes: quizes});
-	}).catch (function(error) { next(error); });
+
+  if (req.query.search === undefined) {
+	    models.Quiz.findAll().then(function (quizes) {
+		        res.render('quizes/index.ejs', { quizes: quizes});
+	    }).catch (function(error) { next(error); });
+  } else {
+
+      // Eliminar los espacios a la izquierda y a la derecha del patrón de búsqueda
+      var patronBusqueda = req.query.search.trim();
+
+      // Sustituir los espacios en blanco, interiores, por '%'
+      patronBusqueda = '%' + patronBusqueda + '%';
+      patronBusqueda = patronBusqueda.replace (/\s+/g, '%');
+
+      //Convertir a mayúsculas el criterio de búsqueda
+      patronBusqueda = patronBusqueda.toUpperCase();
+
+      // Mostrar el valor del patrón de búsqueda
+      // console.log('************* El patrón de búsqueda vale ************* *' + patronBusqueda + '*');
+
+      // Localización de las preguntas que se ajustan al patrón de búsqueda
+      models.Quiz.findAll({where: [ "upper(pregunta) like ?", patronBusqueda], order: 'pregunta ASC'}).then(function (quizes) {
+            res.render('quizes/index.ejs', { quizes: quizes});
+      }).catch (function(error) { next(error); });
+  }
+
 };
 
 // GET /quizes/:id
