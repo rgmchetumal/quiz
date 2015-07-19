@@ -16,7 +16,8 @@ router.param ('quizId', quizController.load); // autoload :quizId
 router.get('/quizes',                       quizController.index);
 router.get('/quizes/:quizId(\\d+)',         quizController.show);
 router.get('/quizes/:quizId(\\d+)/answer',  quizController.answer);
-
+router.get('/quizes/new',                   quizController.new);
+router.post('/quizes/create',               quizController.create);
 
 // Activar las páginas de preguntas y respuestas considerando sus controladores (Instrucciones antiguas)
 //router.get('/quizes/question', quizController.question);
