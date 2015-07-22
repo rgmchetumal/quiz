@@ -27,9 +27,15 @@ exports.load = function ( req, res, next, quizId ) {
 exports.index = function (req, res) {
 
   if (req.query.search === undefined) {
+
+      // Indicar que se pasó por aquí
+      console.log('**** Falla en el render del exports.index **************');
+
+
 	    models.Quiz.findAll().then(function (quizes) {
-		        res.render('quizes/index.ejs', { quizes: quizes});
+		        res.render('quizes/index.ejs', { quizes: quizes, errors: []});
 	    }).catch (function(error) { next(error); });
+      
   } else {
 
       // Eliminar los espacios a la izquierda y a la derecha del patrón de búsqueda
@@ -47,7 +53,7 @@ exports.index = function (req, res) {
 
       // Localización de las preguntas que se ajustan al patrón de búsqueda
       models.Quiz.findAll({where: [ "upper(pregunta) like ?", patronBusqueda], order: 'pregunta ASC'}).then(function (quizes) {
-            res.render('quizes/index.ejs', { quizes: quizes});
+            res.render('quizes/index.ejs', { quizes: quizes, errors: []});
       }).catch (function(error) { next(error); });
   }
 
@@ -55,7 +61,7 @@ exports.index = function (req, res) {
 
 // GET /quizes/:id
 exports.show = function (req, res) {
-      res.render('quizes/show', {quiz: req.quiz});
+      res.render('quizes/show', {quiz: req.quiz, errors: []});
 };
 
 // GET de la ruta quizes/answer (versión antigua)
@@ -94,38 +100,42 @@ exports.answer = function (req, res) {
          resultado = 'Correcto';
       };
 
-      res.render ( 'quizes/answer', { quiz: req.quiz, respuesta: resultado} );
+      res.render ( 'quizes/answer', { quiz: req.quiz, respuesta: resultado, errors: []} );
 };
 
 // GET /quizes/new
 exports.new = function(req, res){
+  var quiz = models.Quiz.build(  // crea objeto quiz
+    {pregunta: "Pregunta", respuesta: "Respuesta"}
+  );
 
-      var quiz = models.Quiz.build ( 
-          // Crea el objeto quiz
-          { pregunta: "Pregunta", respuesta: "Respuesta"}
-      );
-
-      res.render ('quizes/new', { quiz: quiz});
-
+  res.render('quizes/new', {quiz: quiz, errors: []});
 };
 
 // POST /quizes/create
-exports.create = function (req, res) {
-      var quiz = models.Quiz.build ( req.body.quiz );
+exports.create = function(req, res) {
+  var quiz = models.Quiz.build(req.body.quiz);
 
-      // Guardar en la base de datos los campos pregunta y respuesta de quiz
-      quiz
-      .save({fields: ["pregunta", "respuesta"]})
-      .then ( function () {
-           // Redirección HTTP (url rleativo) a lista de preguntas
-           res.redirect ('/quizes');
-      });
+  quiz
+  .validate()
+  .then(
+    function(err) {
+      if (err) {
+        res.render('quizes/new', {quiz: quiz, errors: err.errors});
+      } else {
+        quiz  // save: guarda en DB campos y pregunta y respuesta de quiz
+        .save({fields: ["pregunta", "respuesta"]})
+        .then( function(){ res.redirect('/quizes')})
+      }   // res.redirect: Redirección HTTP a lista de preguntas
+    }
+  );
 };
+
 
 // Get de la ruta author/credito
 exports.credito = function (req, res){
 
      // Establecer el nombre del autor de Quiz
-     res.render('author/credito', {nombreAutor: 'Juan Quemada Vives'});
+     res.render('author/credito', {nombreAutor: 'Juan Quemada Vives', errors: []});
 
 };
