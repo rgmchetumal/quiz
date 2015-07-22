@@ -8,6 +8,9 @@ var bodyParser = require('body-parser');
 // Se incluye express-partials
 var partials = require ('express-partials');
 
+// Inclusión del método override para sustituir post por put
+var methodOverride = require ('method-override');
+
 // Se deja la ruta de de index
 var routes = require('./routes/index');
 
@@ -30,6 +33,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Se instala el enrutador como un middleware genérico
