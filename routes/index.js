@@ -12,8 +12,15 @@ router.get('/', function(req, res) {
   res.render('index', { title: 'Quiz', errors: []});
 });
 
-// Autoload de comandos con :quizId
-router.param ('quizId', quizController.load); // autoload :quizId
+// *****************************************************
+// Autoload de comandos
+// *****************************************************
+
+  // Autoload :quizId
+  router.param ('quizId', quizController.load); 
+
+  // Autoload :commentId
+  router.param ('commentId', commentController.load);
 
 // *********************************************************
 // Definición de rutas de sesión
@@ -41,6 +48,7 @@ router.delete('/quizes/:quizId(\\d+)',      sessionController.loginRequired, qui
 // Definición de las rutas de /comment
 router.get('/quizes/:quizId(\\d+)/comments/new', 	commentController.new);
 router.post('/quizes/:quizId(\\d+)/comments', 		commentController.create);
+router.get('/quizes/:quizId(\\d+)/comments/:commentId(\\d+)/publish',  sessionController.loginRequired, commentController.publish);
 
 
 // Activar las páginas de preguntas y respuestas considerando sus controladores (Instrucciones antiguas)
