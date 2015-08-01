@@ -48,6 +48,46 @@ app.use(methodOverride('_method'));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+// **********************************************************************
+// Definición del middleware para implementar el mecanismo de autologout
+// **********************************************************************
+
+
+ app.use(
+
+      function (req, res, next){
+
+        // Validar la existencia de la sesión de usuario
+        if (req.session.user) {
+
+            // Determinar los milisegundos de inactividad
+            milisegundoInicioInactividad = req.session.user.inicioInactividad;
+            milisegundoActual = Date.now();
+            milisegundosInactividad = milisegundoActual - milisegundoInicioInactividad;
+
+            // Analizar los milisegundos de inactividad del usuario
+            if (milisegundosInactividad >= 60000) {
+
+                // Eliminar los datos de sesión del usuario
+                delete req.session.user;
+              
+            } else {
+
+                // Asignar al inicio de inactividad del usuario el momento actual
+                req.session.user.inicioInactividad =  Date.now();
+
+            }
+
+        }
+
+        // Ejecutar el siguiente middleware
+        next();
+
+     }
+
+);
+
+
 // Definición del middleware que está accesible en req.question en req.locals.session para que esté
 // accesible en las vistas. También, guarda la ruta de cada solicitud HTTP en la variable session.redir para
 // poder redireccionar a la vista anterior después de hacer login o logout
